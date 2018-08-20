@@ -1,0 +1,37 @@
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import ImagePicker from 'react-native-image-picker';
+
+export default class App extends React.Component {
+
+  componentDidMount() {
+    ImagePicker.showImagePicker({title: 'Pick an Image', maxWidth: 800, maxHeight: 600}, res => {
+      if (res.didCancel) {
+        console.log('User cancelled!');
+      } else if (res.error) {
+        console.log('Error', res.error);
+      } else {
+        console.log('Success!');
+      }
+    })
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text>Open up App.js to start working on your app!</Text>
+        <Text>Changes you make will automatically reload.</Text>
+        <Text>Shake your phone to open the developer menu.</Text>
+      </View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
