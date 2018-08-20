@@ -1,16 +1,15 @@
+import React from 'react';
 import {AppRegistry} from 'react-native';
-import {Navigation} from "react-native-navigation";
-import {name as appName} from './app.json';
+import {Provider} from 'react-redux';
+
 import App from './App';
 
-Navigation.registerComponent(`navigation.playground.WelcomeScreen`, () => App);
-Navigation.events().registerAppLaunchedListener(() => {
-  Navigation.setRoot({
-    root: {
-      component: {
-        name: "navigation.playground.WelcomeScreen"
-      }
-    }
-  });
-});
-// AppRegistry.registerComponent('placebook', () => App);
+
+
+const ReduxApp = () => (
+  <Provider store={store}>
+    <App/>
+  </Provider>
+);
+
+AppRegistry.registerComponent('memento', () => ReduxApp);

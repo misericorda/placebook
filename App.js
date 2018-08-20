@@ -1,54 +1,52 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import ImagePicker from 'react-native-image-picker';
-import MapView from 'react-native-maps';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { Navigation } from "react-native-navigation";
+import { Provider } from "react-redux";
+import configureStore from './src/store/configureStore';
+
+import AuthScreen from "./src/screens/Auth";
+import FindPlace from "./src/screens/FindPlace";
+import SharePlace from "./src/screens/SharePlace";
+import PlaceDetail from "./src/screens/PlaceDetail";
+import SideDrawer from "./src/screens/SideDrawer";
+import Icon from 'react-native-vector-icons/Ionicons'
+// import ReduxHOC from './src/components/ReduxHOC';
+
+const store = configureStore();
 
 
-export default class App extends React.Component {
+// Register Screens
+Navigation.registerComponentWithRedux("memento.AuthScreen", () => AuthScreen, Provider, store);
+Navigation.registerComponentWithRedux("memento.FindPlace", () => FindPlace, Provider, store);
+Navigation.registerComponentWithRedux("memento.SharePlace", () => SharePlace, Provider, store);
+Navigation.registerComponentWithRedux("memento.PlaceDetail", () => PlaceDetail, Provider, store);
+// Navigation.registerComponent("memento.SideDrawer", () => SideDrawer);
+Navigation.registerComponentWithRedux("memento.SideDrawer", () => SideDrawer, Provider, store);
+Navigation.registerComponent("memento.Icon", () => Icon);
 
-  componentDidMount() {
-    // ImagePicker.showImagePicker({title: 'Pick an Image', maxWidth: 800, maxHeight: 600}, res => {
-    //   if (res.didCancel) {
-    //     console.log('User cancelled!');
-    //   } else if (res.error) {
-    //     console.log('Error', res.error);
-    //   } else {
-    //     console.log('Success!');
-    //   }
-    // })
+// Start a App
+const startApp = () => Navigation.setRoot({
+  root: {
+    stack: {
+      children: [{
+        component: {
+          name: 'memento.AuthScreen',
+          passProps: {
+            text: 'stack with one child'
+          }
+        }
+      }],
+      options: {
+        topBar: {
+          title: {
+            text: 'Welcome screen'
+          }
+        }
+      }
+    }
   }
-
-  render() {
-    const myIcon = (<Icon name="rocket" size={30} color="#900" />)
-    return (
-      <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-        <Text>Changes you make will automatically reload.</Text>
-        <Text>Shake your phone to open the developer menu.</Text>
-        {myIcon}
-        <MapView style={{
-          width: '100%',
-          height: 200,
-        }}
-                 initialRegion={{
-                   latitude: 37.78825,
-                   longitude: -122.4324,
-                   latitudeDelta: 0.0922,
-                   longitudeDelta: 0.0421,
-                 }}
-        />
-        <Text>HI</Text>
-      </View>
-    );
-  }
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
 });
+
+startApp();
+
+export default startApp;
+
