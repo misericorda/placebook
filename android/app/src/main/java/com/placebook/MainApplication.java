@@ -15,38 +15,39 @@ import com.airbnb.android.react.maps.MapsPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 
-public class MainApplication extends Application implements ReactApplication {
+import com.reactnativenavigation.NavigationApplication;
+import com.reactnativenavigation.react.NavigationReactNativeHost;
+import com.reactnativenavigation.react.ReactGateway;
 
-  private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
+public class MainApplication extends NavigationApplication {
     @Override
-    public boolean getUseDeveloperSupport() {
-      return BuildConfig.DEBUG;
+    protected ReactGateway createReactGateway() {
+        ReactNativeHost host = new NavigationReactNativeHost(this, isDebug(), createAdditionalReactPackages()) {
+            @Override
+            protected String getJSMainModuleName() {
+                return "index";
+            }
+        };
+        return new ReactGateway(this, isDebug(), host);
     }
 
     @Override
+    public boolean isDebug() {
+        return BuildConfig.DEBUG;
+    }
+
     protected List<ReactPackage> getPackages() {
-      return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-          new MapsPackage(),
-          new ImagePickerPackage(),
-          new VectorIconsPackage()
-      );
+        // Add additional packages you require here
+        // No need to add RnnPackage and MainReactPackage
+        return Arrays.<ReactPackage>asList(
+            new MapsPackage(),
+            new ImagePickerPackage(),
+            new VectorIconsPackage()
+        );
     }
 
     @Override
-    protected String getJSMainModuleName() {
-      return "index";
+    public List<ReactPackage> createAdditionalReactPackages() {
+        return getPackages();
     }
-  };
-
-  @Override
-  public ReactNativeHost getReactNativeHost() {
-    return mReactNativeHost;
-  }
-
-  @Override
-  public void onCreate() {
-    super.onCreate();
-    SoLoader.init(this, /* native exopackage */ false);
-  }
 }

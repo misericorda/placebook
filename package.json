@@ -10,7 +10,8 @@
   },
   "scripts": {
     "start": "react-native start",
-    "android": "react-native run-android",
+    "android-old": "react-native run-android",
+    "android": "cd android && gradlew app:assembleDebug && gradlew installDebug",
     "ios": "react-native run-ios",
     "test": "jest"
   },
@@ -19,9 +20,10 @@
   },
   "dependencies": {
     "react": "16.3.1",
-    "react-native": "~0.55.2",
+    "react-native": "~0.55.0",
     "react-native-image-picker": "^0.26.10",
     "react-native-maps": "^0.21.0",
+    "react-native-navigation": "^2.0.2485",
     "react-native-vector-icons": "^5.0.0",
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
