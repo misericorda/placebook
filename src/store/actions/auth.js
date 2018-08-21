@@ -51,9 +51,9 @@ export const authStoreToken = (token, expiresIn, refreshToken) => {
     const now = new Date();
     const expiryDate = now.getTime() + 10 * expiresIn;
     dispatch(authSetToken(token, expiryDate));
-    AsyncStorage.setItem('memento:auth:token', token);
-    AsyncStorage.setItem('memento:auth:expiryDate', expiryDate.toString());
-    AsyncStorage.setItem('memento:auth:refreshToken', refreshToken);
+    AsyncStorage.setItem('placebook:auth:token', token);
+    AsyncStorage.setItem('placebook:auth:expiryDate', expiryDate.toString());
+    AsyncStorage.setItem('placebook:auth:refreshToken', refreshToken);
   }
 };
 
@@ -71,9 +71,10 @@ export const authGetToken = () => {
     let promise = new Promise((resolve, reject) => {
       const token = getState().auth.token;
       const expiryDate = getState().auth.expiryDate;
+      console.log('Got token', token);
       if (!token || new Date(expiryDate) <= new Date()) {
         let fetchedToken;
-        AsyncStorage.getItem('memento:auth:token')
+        AsyncStorage.getItem('placebook:auth:token')
           .catch(err => reject())
           .then(token => {
             fetchedToken = token;
@@ -82,7 +83,8 @@ export const authGetToken = () => {
               return;
             }
             // check expiry date
-            return AsyncStorage.getItem('memento:auth:expiryDate');
+            return AsyncStorage.getItem('placebook:auth:expiryDate');
+
           })
           .then(expiryDate => {
             const parsedExpiryDate = new Date(parseInt(expiryDate));
@@ -101,7 +103,7 @@ export const authGetToken = () => {
     });
     return promise
       .catch(err => {
-        return AsyncStorage.getItem('memento:auth:refreshToken')
+        return AsyncStorage.getItem('placebook:auth:refreshToken')
           .then(refreshToken => {
             console.log('Found refresh token', refreshToken);
             return fetch('https://securetoken.googleapis.com/v1/token?key=' + API_KEY, {
@@ -142,8 +144,10 @@ export const authGetToken = () => {
 
 export const authAutoSignIn = () => {
   return dispatch => {
+    console.log('Trying auto-sign-in')
     dispatch(authGetToken())
       .then(token => {
+        console.log('Got token, starting main tabs');
         startMainTabs()
       })
       .catch(err => console.log('Failed to fetch token!', err))
@@ -152,17 +156,19 @@ export const authAutoSignIn = () => {
 
 export const authClearStorage = () => {
   return dispatch => {
-    AsyncStorage.removeItem('memento:auth:token');
-    AsyncStorage.removeItem('memento:auth:expiryDate');
-    return AsyncStorage.removeItem('memento:auth:refreshToken');
+    AsyncStorage.removeItem('placebook:auth:token');
+    AsyncStorage.removeItem('placebook:auth:expiryDate');
+    return AsyncStorage.removeItem('placebook:auth:refreshToken');
   }
 };
 
 
 export const authLogout = () => {
+  console.log('Logout pressed');
   return dispatch => {
     dispatch(authClearStorage())
       .then(() => {
+        console.log('Prepare to start app');
         startApp()
       });
     dispatch(authRemoveToken())

@@ -23,7 +23,6 @@ class SideDrawer extends Component {
 
 const styles = StyleSheet.create({
   drawerItem: {
-
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
@@ -46,5 +45,5 @@ const mapDispatchToProps = (dispatch) => {
   }, dispatch)
 };
 
-export default connect(null, mapDispatchToProps, null, {"withRef": true})(SideDrawer);
+export default connect(null, mapDispatchToProps)(SideDrawer);
 

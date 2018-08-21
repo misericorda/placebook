@@ -4,9 +4,10 @@ import {Platform} from 'react-native';
 
 const startTabs = () => {
   Promise.all([
-    Icon.getImageSource(Platform.OS === 'android' ? 'md-map' : 'ios-map', 30),
-    Icon.getImageSource(Platform.OS === 'android' ? 'md-share-alt' : 'ios-share-alt', 30),
-    Icon.getImageSource(Platform.OS === 'android' ? 'md-menu' : 'ios-menu', 30)
+    Icon.getImageSource(Platform.OS === 'android' ? 'md-journal' : 'ios-journal', 30),
+    Icon.getImageSource(Platform.OS === 'android' ? 'md-aperture' : 'ios-aperture', 30),
+    Icon.getImageSource(Platform.OS === 'android' ? 'md-menu' : 'ios-menu', 30),
+    Icon.getImageSource(Platform.OS === 'android' ? 'md-information-circle' : 'ios-information-circle', 30)
   ]).then(
     sources => {
       Navigation.setRoot({
@@ -14,7 +15,7 @@ const startTabs = () => {
           sideMenu: {
             left: {
               component: {
-                name: 'memento.SideDrawer',
+                name: 'placebook.SideDrawer',
                 id: 'leftSideDrawer'
               },
             },
@@ -25,61 +26,36 @@ const startTabs = () => {
                     stack: {
                       children: [{
                         component: {
-                          name: 'memento.FindPlace',
-                          id: 'memento.FindPlaceScreen'
+                          name: 'placebook.FindPlace',
+                          id: 'placebook.FindPlaceScreen',
+                          passProps: {lb: sources[2], bb: sources[0]}
                         }
                       }],
-                      options: {
-                        topBar: {
-                          visible: true,
-                          title: {
-                            text: 'Find Place'
-                          },
-                          leftButtons: [
-                            {
-                              id: 'openLeftDrawer',
-                              icon: sources[2],
-                              iconColor: 'orange'
-                            }
-                          ]
-                        },
-                        bottomTab: {
-                          title: 'Find Place',
-                          icon: sources[0],
-                        }
-                      }
                     }
                   },
                   {
                     stack: {
                       children: [{
                         component: {
-                          name: 'memento.SharePlace',
+                          name: 'placebook.SharePlace',
+                          id: 'placebook.SharePlaceScreen',
+                          passProps: {lb: sources[2], bb: sources[1]}
                         }
                       }],
-                      options: {
-                        topBar: {
-                          visible: true,
-                          title: {
-                            text: 'Share Place'
-                          },
-                          leftButtons: [
-                            {
-                              id: 'openLeftDrawer',
-                              icon: sources[2]
-                            }
-                          ]
-                        },
-                        bottomTab: {
-                          title: 'Share Place',
-                          icon: sources[1],
-                        }
-                      }
+                    }
+                  },
+                  {
+                    component: {
+                      name: 'placebook.About',
+                      id: 'placebook.AboutScreen',
+                      passProps: {lb: sources[2], bb: sources[3]}
                     }
                   }
                 ],
                 options: {
                   bottomTabs: {
+                    iconColor: 'red',
+                    selectedIconColor:'green',
                     // titleDisplayMode: 'alwaysShow',
                     // fontFamily: 'HelveticaNeue-Italic',
                     // fontSize: 13,
@@ -96,7 +72,6 @@ const startTabs = () => {
                   },
                 }
               },
-
             },
           },
         },

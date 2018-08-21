@@ -12,4 +12,4 @@ const ReduxApp = () => (
   </Provider>
 );
 
-AppRegistry.registerComponent('memento', () => ReduxApp);
+AppRegistry.registerComponent('placebook', () => ReduxApp);

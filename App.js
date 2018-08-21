@@ -1,8 +1,9 @@
 import React from 'react';
-import { Navigation } from "react-native-navigation";
-import { Provider } from "react-redux";
+import {Navigation} from "react-native-navigation";
+import {Provider} from "react-redux";
 import configureStore from './src/store/configureStore';
 
+import About from "./src/screens/About";
 import AuthScreen from "./src/screens/Auth";
 import FindPlace from "./src/screens/FindPlace";
 import SharePlace from "./src/screens/SharePlace";
@@ -15,33 +16,31 @@ const store = configureStore();
 
 
 // Register Screens
-Navigation.registerComponentWithRedux("memento.AuthScreen", () => AuthScreen, Provider, store);
-Navigation.registerComponentWithRedux("memento.FindPlace", () => FindPlace, Provider, store);
-Navigation.registerComponentWithRedux("memento.SharePlace", () => SharePlace, Provider, store);
-Navigation.registerComponentWithRedux("memento.PlaceDetail", () => PlaceDetail, Provider, store);
-// Navigation.registerComponent("memento.SideDrawer", () => SideDrawer);
-Navigation.registerComponentWithRedux("memento.SideDrawer", () => SideDrawer, Provider, store);
-Navigation.registerComponent("memento.Icon", () => Icon);
-
-// Start a App
-const startApp = () => Navigation.setRoot({
-  root: {
-    stack: {
-      children: [{
-        component: {
-          name: 'memento.AuthScreen',
-          passProps: {
-            text: 'stack with one child'
-          }
-        }
-      }],
-      options: {
-        topBar: {
-          title: {
-            text: 'Welcome screen'
-          }
+Navigation.registerComponentWithRedux("placebook.AuthScreen", () => AuthScreen, Provider, store);
+Navigation.registerComponentWithRedux("placebook.FindPlace", () => FindPlace, Provider, store);
+Navigation.registerComponentWithRedux("placebook.SharePlace", () => SharePlace, Provider, store);
+Navigation.registerComponentWithRedux("placebook.PlaceDetail", () => PlaceDetail, Provider, store);
+// Navigation.registerComponent("placebook.SideDrawer", () => SideDrawer);
+Navigation.registerComponentWithRedux("placebook.SideDrawer", () => SideDrawer, Provider, store);
+Navigation.registerComponent("placebook.Icon", () => Icon);
+Navigation.registerComponent("placebook.About", () => About);
+// Trigger sidemenu open
+Navigation.events().registerNavigationButtonPressedListener(({buttonId}) => {
+  if (buttonId === 'openLeftDrawer') {
+    Navigation.mergeOptions('leftSideDrawer', {
+      sideMenu: {
+        left: {
+          visible: true
         }
       }
+    });
+  }
+});
+// Start the App
+const startApp = () => Navigation.setRoot({
+  root: {
+    component: {
+      name: 'placebook.AuthScreen',
     }
   }
 });

@@ -17,19 +17,27 @@ class FindPlaceScreen extends Component {
     };
   }
 
-
-  onNavigationButtonPressed(buttonId) {
-    if (buttonId === 'openLeftDrawer') {
-      Navigation.mergeOptions('leftSideDrawer', {
-        sideMenu: {
-          left: {
-            visible: true
+  static options(passProps) {
+    return {
+      topBar: {
+        visible: true,
+        title: {
+          text: 'Find Place'
+        },
+        leftButtons: [
+          {
+            id: 'openLeftDrawer',
+            icon: passProps.lb,
+            iconColor: 'orange'
           }
-        }
-      });
+        ]
+      },
+      bottomTab: {
+        // text: 'Find',
+        icon: passProps.bb,
+      }
     }
   }
-
   componentDidAppear() {
     console.log('did appear');
     this.props.getPlaces();
@@ -45,7 +53,7 @@ class FindPlaceScreen extends Component {
     Navigation.push(this.props.componentId,
       {
         component: {
-          name: 'memento.PlaceDetail',
+          name: 'placebook.PlaceDetail',
           passProps: {
             selectedPlace: selPlace
           },
@@ -103,7 +111,7 @@ class FindPlaceScreen extends Component {
     }
     return (
       <View style={this.state.placesLoaded ? styles.placesContainer : styles.buttonContainer}>
-        {/*<ButtonWithBackground onPress={() => AsyncStorage.removeItem('memento:auth:expiryDate')} color="#29aaf4"/>*/}
+        {/*<ButtonWithBackground onPress={() => AsyncStorage.removeItem('placebook:auth:expiryDate')} color="#29aaf4"/>*/}
         {content}
       </View>
     );
@@ -145,4 +153,4 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 
-export default connect(mapStateToProps, mapDispatchToProps, null, {"withRef": true})(FindPlaceScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(FindPlaceScreen);

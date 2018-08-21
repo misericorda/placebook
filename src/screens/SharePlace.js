@@ -26,13 +26,37 @@ class SharePlaceScreen extends Component {
     super(props);
   }
 
+  static options(passProps) {
+    return {
+      topBar: {
+        visible: true,
+        title: {
+          text: 'Share Place'
+        },
+        leftButtons: [
+          {
+            id: 'openLeftDrawer',
+            icon: passProps.lb,
+            iconColor: 'orange',
+            buttonColor: 'black',
+            textColor: 'red',
+          }
+        ]
+      },
+      bottomTab: {
+        // text: 'Share',
+        icon: passProps.bb,
+      }
+    }
+  }
+
   componentWillMount() {
     this.reset();
   }
 
   componentDidUpdate() {
     if (this.props.placeAdded) {
-      Navigation.mergeOptions('memento.FindPlaceScreen', {bottomTabs: {currentTabIndex: 0}});
+      Navigation.mergeOptions('placebook.FindPlaceScreen', {bottomTabs: {currentTabIndex: 0}});
     }
   }
 
@@ -40,17 +64,7 @@ class SharePlaceScreen extends Component {
     this.props.startAddPlace()
   }
 
-  onNavigationButtonPressed(buttonId) {
-    if (buttonId === 'openLeftDrawer') {
-      Navigation.mergeOptions('leftSideDrawer', {
-        sideMenu: {
-          left: {
-            visible: true
-          }
-        }
-      });
-    }
-  }
+
 
   addPlaceHandler = () => {
     let {placeName, location, image} = this.state.controls;
@@ -200,4 +214,4 @@ const mapStateToProps = state => {
   }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps, null, {"withRef": true})(SharePlaceScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(SharePlaceScreen);

@@ -102,4 +102,4 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 
-export default connect(null, mapDispatchToProps, null, {"withRef": true})(PlaceDetailScreen);
+export default connect(null, mapDispatchToProps)(PlaceDetailScreen);

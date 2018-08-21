@@ -19,6 +19,8 @@ import com.reactnativenavigation.NavigationApplication;
 import com.reactnativenavigation.react.NavigationReactNativeHost;
 import com.reactnativenavigation.react.ReactGateway;
 
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
+
 public class MainApplication extends NavigationApplication {
     @Override
     protected ReactGateway createReactGateway() {
@@ -42,7 +44,8 @@ public class MainApplication extends NavigationApplication {
         return Arrays.<ReactPackage>asList(
             new MapsPackage(),
             new ImagePickerPackage(),
-            new VectorIconsPackage()
+            new VectorIconsPackage(),
+            new SplashScreenReactPackage()
         );
     }
 

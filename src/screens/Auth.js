@@ -24,7 +24,7 @@ import ButtonWithBackground from '../components/UI/ButtonWithBackground';
 import bgImg from '../assets/init_bg.jpg';
 import validate from '../utility/validation';
 import {tryAuth, authAutoSignIn} from "../store/actions/"
-// import SplashScreen from 'react-native-splash-screen'
+import SplashScreen from 'react-native-splash-screen'
 
 class AuthScreen extends Component {
   constructor(props) {
@@ -62,12 +62,20 @@ class AuthScreen extends Component {
       }
     };
   }
-  componentWillAppear() {
-    console.log('HI')
+  static options(passProps) {
+    return {
+      topBar: {
+        title: {
+          text: 'My Screen'
+        },
+        drawBehind: true,
+        visible: false,
+        animate: false
+      }
+    };
   }
   componentDidMount() {
-    // SplashScreen.hide();
-    console.log('DID MOUNT')
+    SplashScreen.hide();
     this.props.authAutoSignIn();
   }
 
@@ -178,9 +186,8 @@ class AuthScreen extends Component {
       <ImageBackground source={bgImg} style={styles.backgroundImage}>
         <KeyboardAvoidingView style={styles.container} behavior="padding">
           {headingText}
-          <ButtonWithBackground onPress={f => f} color='#29aaf4'>Run APP!</ButtonWithBackground>
           <ButtonWithBackground onPress={this.switchAuthModeHandler} color='#29aaf4'>
-            Switch to {this.state.authMode !== 'login' ? 'Login' : 'Signup'}
+            Want to {this.state.authMode !== 'login' ? 'Login' : 'Signup'}?
           </ButtonWithBackground>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.inputContainer}>
@@ -273,4 +280,4 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 
-export default connect(mapStateToProps, mapDispatchToProps, null, {"withRef": true})(AuthScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(AuthScreen);
