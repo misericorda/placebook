@@ -39,13 +39,10 @@ class FindPlaceScreen extends Component {
     }
   }
   componentDidAppear() {
-    console.log('did appear');
+
     this.props.getPlaces();
   }
 
-  componentDidMount() {
-    console.log('Did mount appear');
-  }
 
   itemSelectedHandler = key => {
     console.log(key);
@@ -148,7 +145,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
-    getPlaces
+    getPlaces,
   }, dispatch)
 };
 

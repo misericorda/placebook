@@ -1,8 +1,8 @@
-import {AUTH_SET_TOKEN, AUTH_REMOVE_TOKEN} from "../actions/actionTypes"
+import {AUTH_SET_TOKEN, AUTH_REMOVE_TOKEN, DISABLE_AUTO_SIGN_IN} from "../actions/actionTypes"
 
 const initialState = {
   token: null,
-  expiryDate: null
+  expiryDate: null,
 };
 
 

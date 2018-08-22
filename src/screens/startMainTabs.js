@@ -54,21 +54,6 @@ const startTabs = () => {
                 ],
                 options: {
                   bottomTabs: {
-                    iconColor: 'red',
-                    selectedIconColor:'green',
-                    // titleDisplayMode: 'alwaysShow',
-                    // fontFamily: 'HelveticaNeue-Italic',
-                    // fontSize: 13,
-                    selectedTabColor: 'orange'
-                    // unselectedTabColor: 'red',
-                    // tabColor: 'blue',
-                    // selectedTabColor: 'red',
-                    // currentTabIndex: 1,
-                    // visible: false,
-                    // drawBehind: true,
-                    // animate: true,
-                    // tabColor: 'blue',
-                    // selectedTabColor: 'red'
                   },
                 }
               },

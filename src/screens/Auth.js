@@ -23,7 +23,7 @@ import MainText from '../components/UI/MainText';
 import ButtonWithBackground from '../components/UI/ButtonWithBackground';
 import bgImg from '../assets/init_bg.jpg';
 import validate from '../utility/validation';
-import {tryAuth, authAutoSignIn} from "../store/actions/"
+import {tryAuth, authAutoSignIn, tryAutoSignIn} from "../store/actions/"
 import SplashScreen from 'react-native-splash-screen'
 
 class AuthScreen extends Component {
@@ -76,7 +76,7 @@ class AuthScreen extends Component {
   }
   componentDidMount() {
     SplashScreen.hide();
-    this.props.authAutoSignIn();
+    this.props.tryAutoSignIn()
   }
 
 
@@ -268,14 +268,15 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    isLoading: state.ui.isLoading
+    isLoading: state.ui.isLoading,
   }
 };
 
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
     onTryAuth: tryAuth,
-    authAutoSignIn: authAutoSignIn
+    authAutoSignIn: authAutoSignIn,
+    tryAutoSignIn
   }, dispatch)
 };
 

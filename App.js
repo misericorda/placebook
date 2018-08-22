@@ -37,7 +37,7 @@ Navigation.events().registerNavigationButtonPressedListener(({buttonId}) => {
   }
 });
 // Start the App
-const startApp = () => Navigation.setRoot({
+export const startApp = () => Navigation.setRoot({
   root: {
     component: {
       name: 'placebook.AuthScreen',

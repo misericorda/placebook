@@ -1,4 +1,4 @@
-import {REMOVE_PLACE, SET_PLACES, PLACE_ADDED, START_ADD_PLACE} from "./actionTypes";
+import {REMOVE_PLACE, SET_PLACES, PLACE_ADDED, START_ADD_PLACE, GET_PLACES} from "./actionTypes";
 import {uiStartLoading, uiStopLoading} from "./ui"
 import {authGetToken} from "./auth"
 
@@ -7,6 +7,10 @@ export const startAddPlace = () => {
     type: START_ADD_PLACE
   }
 };
+
+export const getPlaces = () => ({
+  type: GET_PLACES
+});
 
 export const addPlace = (name, location, image) => {
   return (dispatch, getState) => {
@@ -71,33 +75,33 @@ export const addPlace = (name, location, image) => {
   };
 };
 
-export const getPlaces = () => {
-  return (dispatch, getState) => {
-    dispatch(authGetToken())
-      .catch(() => alert('No valid token found'))
-      .then(token => fetch("https://memento-1530788482372.firebaseio.com/places.json?auth=" + token))
-      .then(res => res.json())
-      .then(parsed => {
-        console.log('Parsed response');
-        console.log(parsed);
-        const places = [];
-        for (let key in parsed) {
-          places.push({
-            ...parsed[key],
-            key,
-            image: {
-              uri: parsed[key].image
-            }
-          });
-        }
-        dispatch(setPlaces(places))
-      })
-      .catch(err => {
-        console.log(err);
-        alert('Something went wrong, please try again!');
-      })
-  }
-};
+// export const getPlaces = () => {
+//   return (dispatch, getState) => {
+//     dispatch(authGetToken())
+//       .catch(() => alert('No valid token found'))
+//       .then(token => fetch("https://memento-1530788482372.firebaseio.com/places.json?auth=" + token))
+//       .then(res => res.json())
+//       .then(parsed => {
+//         console.log('Parsed response');
+//         console.log(parsed);
+//         const places = [];
+//         for (let key in parsed) {
+//           places.push({
+//             ...parsed[key],
+//             key,
+//             image: {
+//               uri: parsed[key].image
+//             }
+//           });
+//         }
+//         dispatch(setPlaces(places))
+//       })
+//       .catch(err => {
+//         console.log(err);
+//         alert('Something went wrong, please try again!');
+//       })
+//   }
+// };
 
 export const setPlaces = places => {
   return {
