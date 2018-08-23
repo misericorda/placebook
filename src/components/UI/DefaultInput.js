@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
     padding: 5,
     marginTop: 8,
     marginBottom: 8,
+    borderRadius: 5,
   },
   invalid: {
     backgroundColor: '#f9c0c0',

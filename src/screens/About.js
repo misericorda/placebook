@@ -7,7 +7,8 @@ const libsUsed = [
   'react', 'react-native',
   'react-native-image-picker', 'react-native-maps',
   'react-native-navigation', 'react-native-splash-screen',
-  'react-native-vector-icons', 'redux', 'redux-saga'
+  'react-native-vector-icons', 'redux', 'redux-saga',
+  'firebase', 'firebase functions', 'firebase storage'
 ];
 
 class About extends Component {
@@ -20,7 +21,7 @@ class About extends Component {
     return (
       <View style={styles.aboutContainer}>
         <Text style={styles.textHeader}>About</Text>
-        <Text>This app is created by Dmitry Oleinik while learning ReactNative in July 2018.</Text>
+        <Text>Hi, my name is Dmitry Oleink. I've created this app while learning ReactNative in July 2018.</Text>
         <Text style={{margin: 10}}>Technologies used:</Text>
         <View style={{width: '100%'}}>
           <FlatList data={libsUsed}
@@ -50,8 +51,7 @@ const styles = StyleSheet.create({
     marginBottom: 15
   },
   aboutContainer: {
-    paddingBottom: 40,
-    paddingTop: 50,
+    padding: 40,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center'
