@@ -15,7 +15,7 @@ import PickImage from '../components/PickImage';
 import PickLocation from '../components/PickLocation';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {addPlace, startAddPlace, placeAdded} from '../store/actions/index';
+import {startAddPlace} from '../store/actions';
 import {Navigation} from 'react-native-navigation';
 import MainText from '../components/UI/MainText';
 import HeadingText from '../components/UI/HeadingText';
@@ -26,29 +26,6 @@ class SharePlaceScreen extends Component {
     super(props);
   }
 
-  static options(passProps) {
-    return {
-      topBar: {
-        visible: true,
-        title: {
-          text: 'Share Place'
-        },
-        leftButtons: [
-          {
-            id: 'openLeftDrawer',
-            icon: passProps.lb,
-            iconColor: 'orange',
-            buttonColor: 'black',
-            textColor: 'red',
-          }
-        ]
-      },
-      bottomTab: {
-        // text: 'Share',
-        icon: passProps.bb,
-      }
-    }
-  }
 
   componentWillMount() {
     this.reset();
@@ -60,18 +37,15 @@ class SharePlaceScreen extends Component {
     }
   }
 
-  componentDidDisappear() {
-    this.props.startAddPlace()
-  }
-
-
-
   addPlaceHandler = () => {
     let {placeName, location, image} = this.state.controls;
-    this.props.addPlace(placeName.value, location.value, image.value);
-    this.reset();
-    this.imagePicker.reset();
-    this.locationPicker.reset();
+    let callback = () => {
+      Navigation.mergeOptions('placebook.FindPlaceScreen', {bottomTabs: {currentTabIndex: 0}});
+      this.reset();
+      this.imagePicker.reset();
+      this.locationPicker.reset();
+    }
+    this.props.startAddPlace(placeName.value, location.value, image.value, callback);
   };
 
   placeNameChangedHandler = val => {
@@ -179,6 +153,28 @@ class SharePlaceScreen extends Component {
   }
 }
 
+SharePlaceScreen.options = (passProps) => ({
+  topBar: {
+    visible: true,
+    title: {
+      text: 'Share Place'
+    },
+    leftButtons: [
+      {
+        id: 'openLeftDrawer',
+        icon: passProps.lb,
+        iconColor: 'orange',
+        buttonColor: 'black',
+        textColor: 'red',
+      }
+    ]
+  },
+  bottomTab: {
+    // text: 'Share',
+    icon: passProps.bb,
+  }
+});
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -200,9 +196,9 @@ const styles = StyleSheet.create({
   }
 });
 
+
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
-    addPlace,
     startAddPlace
   }, dispatch)
 };

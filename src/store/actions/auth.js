@@ -1,14 +1,17 @@
-import {TRY_AUTH, AUTH_SET_TOKEN, AUTH_REMOVE_TOKEN, TRY_AUTO_SIGN_IN, LOG_OUT} from "./actionTypes"
+import {
+  AUTH_TRY_AUTH,
+  AUTH_SET_TOKEN,
+  AUTH_TRY_AUTO_SIGN_IN,
+  AUTH_START_LOG_OUT} from "./actionTypes"
 
 export const authLogout = () => {
   return {
-    type: LOG_OUT
+    type: AUTH_START_LOG_OUT
   }
 };
-
 export const tryAutoSignIn = () => {
   return {
-    type: TRY_AUTO_SIGN_IN
+    type: AUTH_TRY_AUTO_SIGN_IN
   }
 };
 export const authSetToken = (token, expiryDate) => {
@@ -20,7 +23,7 @@ export const authSetToken = (token, expiryDate) => {
 };
 export const tryAuth = (authData, authMode) => {
   return {
-    type: TRY_AUTH,
+    type: AUTH_TRY_AUTH,
     authData,
     authMode
   }

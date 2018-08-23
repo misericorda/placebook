@@ -6,6 +6,7 @@ import {addPlace, getPlaces} from '../store/actions/index';
 import PlaceList from '../components/PlaceList';
 import {Navigation} from 'react-native-navigation';
 import ButtonWithBackground from "../components/UI/ButtonWithBackground";
+import {getPlacesAsync} from "../store/sagas/places"
 
 class FindPlaceScreen extends Component {
   constructor(props) {
@@ -38,14 +39,13 @@ class FindPlaceScreen extends Component {
       }
     }
   }
-  componentDidAppear() {
 
-    this.props.getPlaces();
+  componentDidAppear() {
+    console.log('FindPlaceScreen appeared')
+    this.props.getPlaces()
   }
 
-
   itemSelectedHandler = key => {
-    console.log(key);
     const selPlace = this.props.places.find(place => place.key === key);
     Navigation.push(this.props.componentId,
       {
@@ -107,8 +107,9 @@ class FindPlaceScreen extends Component {
       )
     }
     return (
-      <View style={this.state.placesLoaded ? styles.placesContainer : styles.buttonContainer}>
-        {/*<ButtonWithBackground onPress={() => AsyncStorage.removeItem('placebook:auth:expiryDate')} color="#29aaf4"/>*/}
+      <View style={this.state.placesLoaded
+        ? styles.placesContainer
+        : styles.buttonContainer}>
         {content}
       </View>
     );

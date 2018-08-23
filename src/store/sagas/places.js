@@ -1,35 +1,29 @@
-import {call, put, takeEvery, takeLatest, all, select} from 'redux-saga/effects'
-import {GET_PLACES} from "./../actions/actionTypes"
-import {setPlaces} from "./../actions/places"
-import {delay} from 'redux-saga'
-import {BASE_FB_URL} from "../../constants"
-import {getTokenAsync} from "./auth"
-import {AsyncStorage} from 'react-native';
-const getToken = state => state.auth.token;
-import {startApp} from "../../../App"
+import axios from 'axios';
+import {call, put, takeEvery, all} from 'redux-saga/effects'
+import {GET_PLACES, START_DELETE_PLACE, START_ADD_PLACE} from "./../actions/actionTypes"
+import {setPlaces, removePlace, uiStartLoading, uiStopLoading} from "./../actions"
+import {DATABASE_URL, STORE_IMAGE_URL} from "../../constants"
+import {getFirebaseCredentials} from "./auth"
 
 const handleError = (err) => {
   console.log(err);
-  alert('An unexpected error occurred, try switching the page');
-  startApp()
-  return null
+  alert('An unexpected error occurred, try switching the page!');
 };
 
 function* getPlacesAsync() {
-  let token = yield call(getTokenAsync);
-  if (!token) return null;
+  let token = yield call(getFirebaseCredentials);
+  if (!token) return handleError('No token found');
   let res;
+  console.log('Sending request');
   try {
-    res = yield fetch(`${BASE_FB_URL}/places.json?auth=${token}`);
-    if (res.status !== 200) {
-      return handleError('Network error');
-    }
+    res = yield axios(`${DATABASE_URL}/places.json?auth=${token}`);
   } catch (e) {
     return handleError(e);
   }
-  let data = yield res.json();
+  // sends null if no places in db;
+  let data = res.data || {};
   const places = [];
-
+  console.log('Got places data', data);
   Object.keys(data).forEach(key => places.push({
     ...data[key],
     key,
@@ -37,7 +31,62 @@ function* getPlacesAsync() {
       uri: data[key].image
     }
   }));
-  yield put(setPlaces(places))
+  yield put(setPlaces(places));
+}
+
+function* addPlaceAsync({name, location, image, callback}) {
+  console.log(name, location, image, callback);
+  yield put(uiStartLoading());
+  let token = yield call(getFirebaseCredentials);
+  if (!token) {
+    return handleError('No token found');
+  }
+  console.log('Got token, starting request. Token: ', token);
+  try {
+    // Save image into bucket
+    let bucketResponse = yield axios({
+      url: `${STORE_IMAGE_URL}`,
+      method: 'POST',
+      data: {image: image.base64},
+      headers: {'authorization': 'Bearer ' + token}
+    });
+    let data = bucketResponse.data;
+    // Save place with image url in firebase
+    yield axios({
+      url: `${DATABASE_URL}/places.json?auth=${token}`,
+      method: 'POST',
+      data: {
+        name,
+        location,
+        image: data.imageUrl,
+        imagePath: data.imagePath
+      }
+    });
+    yield put(uiStopLoading());
+    callback();
+  } catch (e) {
+    yield call(handleError, e);
+    yield put(uiStopLoading());
+  }
+}
+
+export function* deletePlaceAsync({key, callback}) {
+  console.log('Going to delete a place from firebase');
+  let token = yield call(getFirebaseCredentials);
+  if (!token) return handleError('No token found');
+  console.log('Got token');
+  yield put(removePlace(key));
+  console.log('Removed place from store');
+  let res;
+  try {
+    console.log('Sending request');
+    yield axios.delete(`${DATABASE_URL}/places/${key}.json?auth=${token}`);
+  } catch (e) {
+    console.log(res);
+    return handleError(e)
+  }
+  console.log('Place was removed from firebase');
+  callback()
 }
 
 
@@ -45,8 +94,18 @@ function* watchGetPlaces() {
   yield takeEvery(GET_PLACES, getPlacesAsync)
 }
 
-export default function* places() {
+function* watchAddPlace() {
+  yield takeEvery(START_ADD_PLACE, addPlaceAsync)
+}
+
+function* watchDeletePlace() {
+  yield takeEvery(START_DELETE_PLACE, deletePlaceAsync)
+}
+
+export default function* placesSaga() {
   yield all([
     watchGetPlaces(),
+    watchAddPlace(),
+    watchDeletePlace()
   ])
 }

@@ -56,10 +56,10 @@ const styles = StyleSheet.create({
   },
   placeholder: {
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: '#eee',
     backgroundColor: '#eee',
-    width: '80%',
-    height: 150,
+    width: '100%',
+    height: 250,
   },
   button: {
     margin: 10

@@ -4,7 +4,6 @@ import {View, Text, StyleSheet, ScrollView, FlatList} from 'react-native';
 import ListItem from './ListItem';
 
 const PlaceList = ({places, onItemSelected}) => {
-  console.log(places);
   return (
     <FlatList
       data={places}
