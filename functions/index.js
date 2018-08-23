@@ -12,13 +12,13 @@ const UUID = require('uuid-v4');
 // key filename - file in functions folder downloaded from project settings -> service accounts -> create key
 const gcconfig = {
   projectId: 'memento-1530788482372',
-  keyFilename: 'memento.json'
+  keyFilename: 'keys.json'
 };
 
 const gcs = require('@google-cloud/storage')(gcconfig);
 
 admin.initializeApp({
-  credential: admin.credential.cert(require('./memento.json'))
+  credential: admin.credential.cert(require('./keys.json'))
 });
 
 // // Create and Deploy Your First Cloud Functions
@@ -84,7 +84,7 @@ exports.storeImage = functions.https.onRequest((request, response) => {
   });
 });
 
-exports.deleteImage = functions.database.ref('/places/{placeId}/')
+exports.deleteImage = functions.database.ref('/{uid}/places/{placeId}/')
   .onDelete(snapshot => {
     const imagePath =  snapshot._data.imagePath;
     console.log(imagePath)

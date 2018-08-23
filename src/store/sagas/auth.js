@@ -9,17 +9,18 @@ import {
   AUTH_REMOVE_TOKEN,
   AUTH_TRY_AUTH
 } from '../actions/actionTypes';
-import {authSetToken, uiStartLoading, uiStopLoading} from '../actions'
+import {authSetCredentials, uiStartLoading, uiStopLoading} from '../actions'
 import {
   STORAGE_TOKEN_NAME,
   STORAGE_TOKEN_EXP_DATE_NAME,
   STORAGE_TOKEN_REFRESH_NAME,
+  STORAGE_USER_ID,
   FIREBASE_API_KEY
 } from '../../constants';
 import {startMainTabs, startLoginScreen} from '../../screens'
 
-const getTokenKey = state => state.auth.token;
-const getExpDateKey = state => state.auth.expiryDate;
+const getAuthObject = state => state.auth;
+
 const getAuthUrl = (mode) => {
   return mode === 'signup'
     ? 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=' + FIREBASE_API_KEY
@@ -29,42 +30,46 @@ const getAuthUrl = (mode) => {
 export function* getFirebaseCredentials() {
   // Try to get token from store or Async storage first
   // If token expired - try to use refresh token to get a new one
-  let token = yield call(getFirebaseCredentialsFromReduxOrStorage);
-  if (!token) {
-    token = yield call(tryTokenRefresh);
+  let credentials = yield call(getFirebaseCredentialsFromReduxOrStorage);
+  if (!credentials) {
+    credentials = yield call(tryTokenRefresh);
   }
-  if (!token) yield call(clearTokenStorage);
-  return token
+  if (!credentials) yield call(clearTokenStorage);
+  return credentials
 }
 
 function* getFirebaseCredentialsFromReduxOrStorage() {
-  let token = yield select(getTokenKey);
-  let expDate = new Date(parseInt(yield select(getExpDateKey)));
-  console.log('Looking for token in store');
-  console.log(`Token: ${token}\nExpDate: ${expDate}`);
+  let authObject = yield select(getAuthObject);
+  let {uid, token, expiryDate} = authObject;
+  expiryDate = new Date(parseInt(expiryDate));
+  console.log(`Got credentials from store\nUid: ${uid}\nToken: ${token}\nExpDate: ${expiryDate}`);
   try {
-    if (!token || expDate <= new Date()) {
+    if (!uid || !token || expiryDate <= new Date()) {
       console.log('No valid token found in store');
-      let storedToken = yield call([AsyncStorage, 'getItem'], STORAGE_TOKEN_NAME);
-      if (!storedToken) {
-        console.log('No token found in storage');
+      let credentialsFromStorage = yield call([AsyncStorage, 'multiGet'],
+        [STORAGE_TOKEN_NAME, STORAGE_TOKEN_EXP_DATE_NAME, STORAGE_USER_ID]);
+      let uid = credentialsFromStorage[3][1];
+      let storedToken = credentialsFromStorage[0][1];
+      let expDate = credentialsFromStorage[1][1];
+      let storedUid = credentialsFromStorage[2][1];
+      if (!uid || !storedToken) {
+        console.log('No credentials found in AsyncStorage');
         return null;
       }
-      let expDate = yield call([AsyncStorage, 'getItem'], STORAGE_TOKEN_EXP_DATE_NAME);
       const parsedExpiryDate = new Date(parseInt(expDate));
       const now = new Date();
       if (parsedExpiryDate > now) {
         console.log('Found valid token in storage');
-        yield put(authSetToken(storedToken, expDate));
-        console.log('Token in store refreshed from storage');
-        return storedToken;
+        yield put(authSetCredentials(storedToken, expDate, uid));
+        console.log('Credentials refreshed from storage');
+        return {token: storedToken, storedUid};
       } else {
         console.log('Token in storage expired');
         return null;
       }
     } else {
       console.log('Token with valid expDate was found in store');
-      return token
+      return {token, uid}
     }
   } catch (e) {
     return null;
@@ -79,30 +84,33 @@ function* tryTokenRefresh() {
     let body = 'grant_type=refresh_token&refresh_token=' + refreshToken;
     let response;
     try {
-      response = yield axios.post(url, body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}
-      );
+      response = yield axios.post(url, body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}});
     } catch (e) {
       console.log('Network error', e);
       return null
     }
     console.log(response);
-    let {id_token, expires_in, refresh_token} = response.data;
+    let {id_token, expires_in, refresh_token, user_id} = response.data;
     if (!id_token) return null;
-    yield call(storeCredentials, id_token, expires_in, refresh_token);
+    yield call(storeCredentials, id_token, expires_in, refresh_token, user_id);
     console.log('Token refreshed');
-    return id_token;
+    return {token: id_token, uid: user_id};
   } catch (e) {
     return null
   }
 }
 
-function* storeCredentials(token, expiresIn, refreshToken) {
+function* storeCredentials(token, expiresIn, refreshToken, uid) {
   const now = new Date();
-  const expiryDate = now.getTime() + 5 * expiresIn;
-  yield put(authSetToken(token, expiryDate));
-  yield call([AsyncStorage, 'setItem'], STORAGE_TOKEN_NAME, token);
-  yield call([AsyncStorage, 'setItem'], STORAGE_TOKEN_EXP_DATE_NAME, expiryDate.toString());
-  yield call([AsyncStorage, 'setItem'], STORAGE_TOKEN_REFRESH_NAME, refreshToken);
+  const expiryDate = now.getTime() + 1000 * expiresIn;
+  yield put(authSetCredentials(token, expiryDate, uid));
+  let valuesToSet = [
+    [STORAGE_TOKEN_NAME, token],
+    [STORAGE_TOKEN_EXP_DATE_NAME, expiryDate.toString()],
+    [STORAGE_TOKEN_REFRESH_NAME, refreshToken],
+    [STORAGE_USER_ID, uid],
+  ];
+  yield call([AsyncStorage, 'multiSet'], valuesToSet);
   return null
 }
 
@@ -110,6 +118,7 @@ function* clearTokenStorage() {
   yield call([AsyncStorage, 'removeItem'], STORAGE_TOKEN_NAME);
   yield call([AsyncStorage, 'removeItem'], STORAGE_TOKEN_EXP_DATE_NAME);
   yield call([AsyncStorage, 'removeItem'], STORAGE_TOKEN_REFRESH_NAME);
+  yield call([AsyncStorage, 'removeItem'], STORAGE_USER_ID);
 }
 
 function* tryAutoSignIn() {
@@ -147,10 +156,8 @@ function* authUser({authData, authMode}) {
   console.log(response.data);
   let {idToken, expiresIn, refreshToken, localId} = response.data;
   yield put(uiStopLoading());
+  if (!idToken) return alert('Authentication failed, please try again!');
   console.log('Got data, saving it...');
-  if (!idToken) {
-    alert('Authentication failed, please try again!');
-  }
   yield call(storeCredentials, idToken, expiresIn, refreshToken, localId);
   console.log('token set, auth succeeded');
   return startMainTabs();

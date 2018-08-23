@@ -1,6 +1,6 @@
 import {
   AUTH_TRY_AUTH,
-  AUTH_SET_TOKEN,
+  AUTH_SET_CREDENTIALS,
   AUTH_TRY_AUTO_SIGN_IN,
   AUTH_START_LOG_OUT} from "./actionTypes"
 
@@ -14,11 +14,12 @@ export const tryAutoSignIn = () => {
     type: AUTH_TRY_AUTO_SIGN_IN
   }
 };
-export const authSetToken = (token, expiryDate) => {
+export const authSetCredentials = (token, expiryDate, uid) => {
   return {
-    type: AUTH_SET_TOKEN,
+    type: AUTH_SET_CREDENTIALS,
     token,
-    expiryDate
+    expiryDate,
+    uid
   }
 };
 export const tryAuth = (authData, authMode) => {

@@ -11,13 +11,16 @@ const handleError = (err) => {
 };
 
 function* getPlacesAsync() {
-  let token = yield call(getFirebaseCredentials);
-  if (!token) return handleError('No token found');
+  let credentials = yield call(getFirebaseCredentials);
+  if (!credentials) return handleError('No token found');
+  let {token, uid} = credentials;
+  console.log(credentials);
   let res;
   console.log('Sending request');
   try {
-    res = yield axios(`${DATABASE_URL}/places.json?auth=${token}`);
+    res = yield axios(`${DATABASE_URL}/${uid}/places.json?auth=${token}`);
   } catch (e) {
+    console.log(e.response);
     return handleError(e);
   }
   // sends null if no places in db;
@@ -37,10 +40,9 @@ function* getPlacesAsync() {
 function* addPlaceAsync({name, location, image, callback}) {
   console.log(name, location, image, callback);
   yield put(uiStartLoading());
-  let token = yield call(getFirebaseCredentials);
-  if (!token) {
-    return handleError('No token found');
-  }
+  let credentials = yield call(getFirebaseCredentials);
+  if (!credentials) return handleError('No token found');
+  let {token, uid} = credentials;
   console.log('Got token, starting request. Token: ', token);
   try {
     // Save image into bucket
@@ -53,7 +55,7 @@ function* addPlaceAsync({name, location, image, callback}) {
     let data = bucketResponse.data;
     // Save place with image url in firebase
     yield axios({
-      url: `${DATABASE_URL}/places.json?auth=${token}`,
+      url: `${DATABASE_URL}/${uid}/places.json?auth=${token}`,
       method: 'POST',
       data: {
         name,
@@ -72,20 +74,21 @@ function* addPlaceAsync({name, location, image, callback}) {
 
 export function* deletePlaceAsync({key, callback}) {
   console.log('Going to delete a place from firebase');
-  let token = yield call(getFirebaseCredentials);
-  if (!token) return handleError('No token found');
-  console.log('Got token');
+  let credentials = yield call(getFirebaseCredentials);
+  if (!credentials) return handleError('No token found');
+  let {token, uid} = credentials;
   yield put(removePlace(key));
   console.log('Removed place from store');
   let res;
   try {
     console.log('Sending request');
-    yield axios.delete(`${DATABASE_URL}/places/${key}.json?auth=${token}`);
+    yield axios.delete(`${DATABASE_URL}/${uid}/places/${key}.json?auth=${token}`);
   } catch (e) {
     console.log(res);
     return handleError(e)
   }
-  console.log('Place was removed from firebase');
+  console.log('Place was removed from firebase, removing from store...');
+  yield put(removePlace(key));
   callback()
 }
 
