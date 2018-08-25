@@ -14,6 +14,7 @@ class FindPlaceScreen extends Component {
       placesLoaded: false,
       removeAnim: new Animated.Value(1)
     };
+    Navigation.events().bindComponent(this);
   }
 
   componentDidAppear() {
