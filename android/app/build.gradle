@@ -122,10 +122,21 @@ android {
             include "armeabi-v7a", "x86"
         }
     }
+    signingConfigs {
+        release {
+            if (project.hasProperty('PLACEBOOK_RELEASE_STORE_FILE')) {
+                storeFile file(PLACEBOOK_RELEASE_STORE_FILE)
+                storePassword PLACEBOOK_RELEASE_STORE_PASSWORD
+                keyAlias PLACEBOOK_RELEASE_KEY_ALIAS
+                keyPassword PLACEBOOK_RELEASE_KEY_PASSWORD
+            }
+        }
+    }
     buildTypes {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
