@@ -77,8 +77,6 @@ export function* deletePlaceAsync({key, callback}) {
   let credentials = yield call(getFirebaseCredentials);
   if (!credentials) return handleError('No token found');
   let {token, uid} = credentials;
-  yield put(removePlace(key));
-  console.log('Removed place from store');
   let res;
   try {
     console.log('Sending request');

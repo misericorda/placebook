@@ -1,6 +1,5 @@
 import axios from 'axios';
 import {AsyncStorage} from 'react-native';
-// import firebase, {firebaseRef} from "../../firebase"
 
 import {call, put, takeEvery, all, select} from 'redux-saga/effects'
 import {

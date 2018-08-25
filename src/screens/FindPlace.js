@@ -1,47 +1,22 @@
 import React, {Component} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, Animated, AsyncStorage} from 'react-native';
-import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {addPlace, getPlaces} from '../store/actions/index';
-import PlaceList from '../components/PlaceList';
+import {connect} from 'react-redux';
+import {View, Text, TouchableOpacity, StyleSheet, Animated} from 'react-native';
 import {Navigation} from 'react-native-navigation';
-import ButtonWithBackground from "../components/UI/ButtonWithBackground";
-import {getPlacesAsync} from "../store/sagas/places"
+
+import {getPlaces} from '../store/actions/index';
+import PlaceList from '../components/PlaceList';
 
 class FindPlaceScreen extends Component {
   constructor(props) {
     super(props);
-    Navigation.events().bindComponent(this);
     this.state = {
       placesLoaded: false,
       removeAnim: new Animated.Value(1)
     };
   }
 
-  static options(passProps) {
-    return {
-      topBar: {
-        visible: true,
-        title: {
-          text: 'Find Place'
-        },
-        leftButtons: [
-          {
-            id: 'openLeftDrawer',
-            icon: passProps.lb,
-            iconColor: 'orange'
-          }
-        ]
-      },
-      bottomTab: {
-        // text: 'Find',
-        icon: passProps.bb,
-      }
-    }
-  }
-
   componentDidAppear() {
-    console.log('FindPlaceScreen appeared')
     this.props.getPlaces()
   }
 
@@ -75,7 +50,6 @@ class FindPlaceScreen extends Component {
       this.setState({
         placesLoaded: true
       });
-      // this.placesLoadedHandler();
     });
 
   };
@@ -138,6 +112,27 @@ const styles = StyleSheet.create({
   }
 });
 
+FindPlaceScreen.options = (passProps) => {
+  return {
+    topBar: {
+      visible: true,
+      title: {
+        text: 'Find Place'
+      },
+      leftButtons: [
+        {
+          id: 'openLeftDrawer',
+          icon: passProps.lb,
+          iconColor: 'orange'
+        }
+      ]
+    },
+    bottomTab: {
+      icon: passProps.bb,
+    }
+  }
+};
+
 const mapStateToProps = (state) => {
   return {
     places: state.places.places
@@ -149,6 +144,5 @@ const mapDispatchToProps = (dispatch) => {
     getPlaces,
   }, dispatch)
 };
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(FindPlaceScreen);

@@ -3,8 +3,8 @@ import {TouchableOpacity, TouchableNativeFeedback, Text, View, StyleSheet, Platf
 
 const ButtonWithBackground = props => {
   const content = (
-    <View style={[styles.button, {backgroundColor: props.color}, props.disabled ? styles.disabled : null]}>
-      <Text style={props.disabled ? styles.disabledText : null}>
+    <View style={[styles.button, props.disabled ? styles.disabled : null]}>
+      <Text style={[styles.text, props.disabled ? styles.disabledText : null]}>
         {props.children}
       </Text>
     </View>
@@ -34,11 +34,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 0,
     borderColor: 'black',
-    backgroundColor: '#fff',
+    backgroundColor: '#3087e0',
   },
   disabled: {
     backgroundColor: '#eee',
     borderColor: '#aaa'
+  },
+  text: {
+    fontWeight: 'bold',
+    color: '#fff',
   },
   disabledText: {
     color: '#aaa',

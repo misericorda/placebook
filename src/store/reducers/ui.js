@@ -1,5 +1,4 @@
 import {UI_START_LOADING, UI_STOP_LOADING} from "../actions/actionTypes"
-import TestImg from '../../assets/island.jpg';
 
 const initialState = {
   isLoading: false

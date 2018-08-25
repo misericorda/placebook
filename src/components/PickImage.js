@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 
 import {View, Image, Button, StyleSheet} from 'react-native';
-import ImagePlaceholder from '../assets/island.jpg';
 import ImagePicker from 'react-native-image-picker';
 
 class PickImage extends Component {

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, ListView, FlatList} from 'react-native';
+import {View, Text, StyleSheet, FlatList} from 'react-native';
 import {Navigation} from 'react-native-navigation';
 
 
@@ -11,29 +11,20 @@ const libsUsed = [
   'firebase', 'firebase functions', 'firebase storage'
 ];
 
-class About extends Component {
-  constructor(props) {
-    super(props);
-    Navigation.events().bindComponent(this);
-  }
+const About = props => (
+  <View style={styles.aboutContainer}>
+    <Text style={styles.textHeader}>About</Text>
+    <Text>Hi, my name is Dmitry Oleink. I've created this app while learning ReactNative in July 2018.</Text>
+    <Text style={{margin: 10}}>Technologies used:</Text>
+    <View style={{width: '100%'}}>
+      <FlatList data={libsUsed}
+                keyExtractor={(item, idx) => item}
+                renderItem={(item) => <Text style={{paddingLeft: 30}}>{`\u2022 ${item.item}`}</Text>}>
+      </FlatList>
+    </View>
 
-  render() {
-    return (
-      <View style={styles.aboutContainer}>
-        <Text style={styles.textHeader}>About</Text>
-        <Text>Hi, my name is Dmitry Oleink. I've created this app while learning ReactNative in July 2018.</Text>
-        <Text style={{margin: 10}}>Technologies used:</Text>
-        <View style={{width: '100%'}}>
-          <FlatList data={libsUsed}
-                    keyExtractor={(item, idx) => item}
-                    renderItem={(item) => <Text style={{paddingLeft: 30}}>{`\u2022 ${item.item}`}</Text>}>
-          </FlatList>
-        </View>
-
-      </View>
-    );
-  }
-}
+  </View>
+);
 
 About.options = (passProps) => {
   return {

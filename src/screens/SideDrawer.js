@@ -6,22 +6,26 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
 
-class SideDrawer extends Component {
-  render() {
-    return (
-      <View style={[styles.container, {width: Dimensions.get('window').width * 0.8}]}>
-        <TouchableOpacity onPress={this.props.authLogout}>
-          <View style={styles.drawerItem}>
-            <Icon size={30} name={Platform.OS === 'android' ? 'md-log-out': "ios-log-out"} color="#aaa" style={styles.drawerItemIcon}/>
-            <Text>Log Out</Text>
-          </View>
-        </TouchableOpacity>
+const SideDrawer = props => (
+  <View style={[styles.container, {width: Dimensions.get('window').width * 0.8}]}>
+    <Text style={styles.drawerTitle}>Available actions</Text>
+    <TouchableOpacity onPress={props.authLogout}>
+      <View style={styles.drawerItem}>
+        <Icon size={30}
+              name={Platform.OS === 'android' ? 'md-log-out' : "ios-log-out"}
+              color="#aaa"
+              style={styles.drawerItemIcon}/>
+        <Text>Log Out</Text>
       </View>
-    )
-  }
-}
+    </TouchableOpacity>
+  </View>
+);
 
 const styles = StyleSheet.create({
+  drawerTitle: {
+    marginBottom: 10,
+
+  },
   drawerItem: {
     flexDirection: 'row',
     alignItems: 'center',

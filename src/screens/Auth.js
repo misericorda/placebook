@@ -1,9 +1,6 @@
 import React, {Component} from 'react';
 import {
   View,
-  Text,
-  Button,
-  TextInput,
   ImageBackground,
   StyleSheet,
   Dimensions,
@@ -11,25 +8,23 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   ActivityIndicator,
-  AsyncStorage
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons'
-import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import startMainTabs from './startMainTabs';
+import {connect} from 'react-redux';
+import SplashScreen from 'react-native-splash-screen';
+
 import DefaultInput from '../components/UI/DefaultInput';
 import HeadingText from '../components/UI/HeadingText';
 import MainText from '../components/UI/MainText';
 import ButtonWithBackground from '../components/UI/ButtonWithBackground';
-import bgImg from '../assets/init_bg.jpg';
+import bgImg from '../assets/login_bg.jpg';
 import validate from '../utility/validation';
-import {tryAuth, authAutoSignIn, tryAutoSignIn} from "../store/actions/"
-import SplashScreen from 'react-native-splash-screen'
+import {tryAuth, tryAutoSignIn} from "../store/actions/"
+
 
 class AuthScreen extends Component {
   constructor(props) {
     super(props);
-    Dimensions.addEventListener('change', this.updateStyles);
     this.state = {
       viewMode: Dimensions.get('window').height > 600 ? 'portrait' : 'landscape',
       authMode: 'login',
@@ -61,19 +56,9 @@ class AuthScreen extends Component {
 
       }
     };
+    Dimensions.addEventListener('change', this.updateStyles);
   }
-  static options(passProps) {
-    return {
-      topBar: {
-        title: {
-          text: 'My Screen'
-        },
-        drawBehind: true,
-        visible: false,
-        animate: false
-      }
-    };
-  }
+
   componentDidMount() {
     SplashScreen.hide();
     this.props.tryAutoSignIn()
@@ -91,9 +76,7 @@ class AuthScreen extends Component {
   };
 
   updateStyles = (dims) => {
-    this.setState(prevState => ({
-      viewMode: dims.window.height > 600 ? 'portrait' : 'landscape'
-    }))
+    this.setState({viewMode: dims.window.height > 600 ? 'portrait' : 'landscape'})
   };
 
   authHandler = () => {
@@ -102,7 +85,7 @@ class AuthScreen extends Component {
       email: email.value,
       password: pwd.value
     };
-    this.props.onTryAuth(authData, this.state.authMode);
+    this.props.tryAuth(authData, this.state.authMode);
   };
 
   updateInputState = (key, value) => {
@@ -111,7 +94,6 @@ class AuthScreen extends Component {
       const equalControl = this.state.controls[key].validationRules.equalTo;
       const equalValue = this.state.controls[equalControl].value;
       connectedValue = {
-        ...connectedValue,
         equalTo: equalValue
       }
     }
@@ -129,7 +111,7 @@ class AuthScreen extends Component {
           valid: key === 'password'
             ? validate(
               prevState.controls.confirmPwd.value,
-              prevState.controld.confirmPwd.validationRules,
+              prevState.controls.confirmPwd.validationRules,
               connectedValue)
             : prevState.controls.confirmPwd.valid
         },
@@ -233,6 +215,19 @@ class AuthScreen extends Component {
   }
 }
 
+AuthScreen.options = (passProps) => {
+  return {
+    topBar: {
+      title: {
+        text: 'My Screen'
+      },
+      drawBehind: true,
+      visible: false,
+      animate: false
+    }
+  };
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -274,8 +269,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
-    onTryAuth: tryAuth,
-    authAutoSignIn: authAutoSignIn,
+    tryAuth,
     tryAutoSignIn
   }, dispatch)
 };

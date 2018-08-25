@@ -1,31 +1,29 @@
 import React, {Component} from 'react';
 import {
   View,
-  Text,
-  TextInput,
   Button,
   StyleSheet,
   ScrollView,
-  Image,
   KeyboardAvoidingView,
   ActivityIndicator
 } from 'react-native';
+
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+import {Navigation} from 'react-native-navigation';
+
 import PlaceInput from '../components/PlaceInput';
 import PickImage from '../components/PickImage';
 import PickLocation from '../components/PickLocation';
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import {startAddPlace} from '../store/actions';
-import {Navigation} from 'react-native-navigation';
 import MainText from '../components/UI/MainText';
 import HeadingText from '../components/UI/HeadingText';
 import validate from '../utility/validation';
+import {startAddPlace} from '../store/actions';
 
 class SharePlaceScreen extends Component {
   constructor(props) {
     super(props);
   }
-
 
   componentWillMount() {
     this.reset();
@@ -44,7 +42,7 @@ class SharePlaceScreen extends Component {
       this.reset();
       this.imagePicker.reset();
       this.locationPicker.reset();
-    }
+    };
     this.props.startAddPlace(placeName.value, location.value, image.value, callback);
   };
 
@@ -131,24 +129,22 @@ class SharePlaceScreen extends Component {
       submitButton = <ActivityIndicator/>;
     }
     return (
-      <KeyboardAvoidingView behavior="padding">
-        <ScrollView>
-          <View style={styles.container}>
-            <MainText>
-              <HeadingText>Share a Place!</HeadingText>
-            </MainText>
-            <PlaceInput
-              placeData={this.state.controls.placeName}
-              onChangeText={this.placeNameChangedHandler}
-            />
-            <PickImage onImagePicked={this.imagePickedHandler} ref={ref => this.imagePicker = ref}/>
-            <PickLocation onLocationPick={this.locationPickedHandler} ref={ref => this.locationPicker = ref}/>
-            <View style={styles.button}>
-              {submitButton}
-            </View>
+      <ScrollView>
+        <View style={styles.container}>
+          <MainText>
+            <HeadingText>Share a Place!</HeadingText>
+          </MainText>
+          <PlaceInput
+            placeData={this.state.controls.placeName}
+            onChangeText={this.placeNameChangedHandler}
+          />
+          <PickImage onImagePicked={this.imagePickedHandler} ref={ref => this.imagePicker = ref}/>
+          <PickLocation onLocationPick={this.locationPickedHandler} ref={ref => this.locationPicker = ref}/>
+          <View style={styles.button}>
+            {submitButton}
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </View>
+      </ScrollView>
     );
   }
 }
@@ -170,7 +166,6 @@ SharePlaceScreen.options = (passProps) => ({
     ]
   },
   bottomTab: {
-    // text: 'Share',
     icon: passProps.bb,
   }
 });
