@@ -5,8 +5,10 @@ const admin = require('firebase-admin');
 const cors = require('cors')({origin: true});
 const fs = require('fs');
 const UUID = require('uuid-v4');
+const credentials = require('./keys.json');
 
-import {PROJECT_ID, BUCKET_URL} from "../credentials";
+const PROJECT_ID = credentials.project_id;
+const BUCKET_URL = PROJECT_ID + '.appspot.com';
 
 // config for storage, porjectId - id of fb project
 // key filename - file in functions folder downloaded from project settings -> service accounts -> create key
