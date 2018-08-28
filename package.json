@@ -13,7 +13,8 @@
     "android": "react-native run-android",
     "build": "cd android&&gradlew assembleRelease",
     "ios": "react-native run-ios",
-    "test": "jest"
+    "test": "jest",
+    "t": "node test.js"
   },
   "jest": {
     "preset": "react-native"

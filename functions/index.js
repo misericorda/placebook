@@ -1,17 +1,17 @@
 // firebase init to init firebase project
 // firebase deploy to send it to the cloud
-
-
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const cors = require('cors')({origin: true});
 const fs = require('fs');
 const UUID = require('uuid-v4');
 
+import {PROJECT_ID, BUCKET_URL} from "../credentials";
+
 // config for storage, porjectId - id of fb project
 // key filename - file in functions folder downloaded from project settings -> service accounts -> create key
 const gcconfig = {
-  projectId: 'memento-1530788482372',
+  projectId: PROJECT_ID,
   keyFilename: 'keys.json'
 };
 
@@ -37,7 +37,6 @@ exports.storeImage = functions.https.onRequest((request, response) => {
     admin.auth().verifyIdToken(idToken)
       .then(decodedToken => {
         // get body
-        console.log(request.body)
         const body = request.body;
         // Save image to temporal file
         const imgPath = '/tmp/uploaded-image.jpg';
@@ -48,7 +47,7 @@ exports.storeImage = functions.https.onRequest((request, response) => {
           return response.status(500).json({error: err});
         });
         // get firebase storage bucket, credential from storage tab in firebase
-        const bucket = gcs.bucket('memento-1530788482372.appspot.com');
+        const bucket = gcs.bucket(BUCKET_URL);
         const uuid = UUID();
         return bucket.upload(imgPath, {
           uploadType: 'media',
@@ -86,8 +85,7 @@ exports.storeImage = functions.https.onRequest((request, response) => {
 
 exports.deleteImage = functions.database.ref('/{uid}/places/{placeId}/')
   .onDelete(snapshot => {
-    const imagePath =  snapshot._data.imagePath;
-    console.log(imagePath)
-    const bucket = gcs.bucket('memento-1530788482372.appspot.com');
+    const imagePath = snapshot._data.imagePath;
+    const bucket = gcs.bucket(BUCKET_URL);
     return bucket.file(imagePath).delete();
   });

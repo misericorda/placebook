@@ -157,7 +157,7 @@ function* authUser({authData, authMode}) {
   yield put(uiStopLoading());
   if (!idToken) return alert('Authentication failed, please try again!');
   console.log('Got data, saving it...');
-  yield storeCredentials(idToken, expiresIn, refreshToken, localId);
+  yield call(storeCredentials, idToken, expiresIn, refreshToken, localId);
   console.log('token set, auth succeeded');
   return startMainTabs();
 }
